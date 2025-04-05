@@ -48,7 +48,7 @@ const validarConsultaUsuarios = [
     query('limite').optional().isInt({ min: 1, max: 100 }).withMessage('Limite deve ser um número entre 1 e 100'),
     query('nome').optional().trim(),
     query('email').optional().trim(),
-    query('papel').optional().isIn(['admin', 'organizador', 'cliente']).withMessage('Papel inválido')
+    query('nivelAcesso').optional().isIn(['admin', 'organizador', 'usuario']).withMessage('Nível de acesso inválido')
 ];
 
 

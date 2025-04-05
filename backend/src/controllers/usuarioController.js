@@ -64,13 +64,13 @@ class UsuarioController{
     //Assíncrono: Buscar listar usuário
     async listarUsuario(req, res){
         try{
-            const { pagina = 1, limite = 10, nome, email, papel } = req.body;
-            const offset = (pagina + 1) * limite;
+            const { pagina = 1, limite = 10, nome, email, nivelAcesso } = req.query;
+            const offset = (pagina - 1) * limite;
 
             const where = {};
             if(nome) where.nome = { [Op.like]: `%${nome}%`};
             if(email) where.email = { [Op.like]: `%${email}%`};
-            if(papel) where.papel = papel;
+            if(nivelAcesso) where.nivelAcesso = nivelAcesso;
 
             const { count, rows } = await Usuario.findAndCountAll({
                 where,
