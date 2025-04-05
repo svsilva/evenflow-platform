@@ -12,12 +12,13 @@ const Usuario = sequelize.define('Usuario', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    email:{
+    email: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
-        validate:{
-            isEmail: true
+        validate: { isEmail: true },
+        set(value) {
+            this.setDataValue('email', value.toLowerCase());
         }
     },
     senha:{
@@ -48,17 +49,21 @@ const Usuario = sequelize.define('Usuario', {
     endereco:{
         type: DataTypes.JSON,
         allowNull: true,
-        validate:{
-            enderecoValido(value){
-                if(value){
-                    if(!value.rua || !value.bairro || !value.numero || !value.cidade || !value.estado){
-                        throw new Error('Todos os campos de endereço são obrigatórios, exceto complemento');
-                    }if(value.estado.length != 2){
-                        throw new Error('Estado deve ter 2 caracteres');
+        validate: {
+            enderecoValido(value) {
+                if (value && typeof value === 'object') {
+                    const camposObrigatorios = ['rua', 'bairro', 'numero', 'cidade', 'estado'];
+                    for (const campo of camposObrigatorios) {
+                        if (!value[campo]) {
+                            throw new Error(`O campo ${campo} é obrigatório.`);
+                        }
+                    }
+                    if (value.estado.length !== 2) {
+                        throw new Error('Estado deve ter 2 caracteres.');
                     }
                 }
             }
-        }
+        }        
     }
 }, {
     hooks:{
