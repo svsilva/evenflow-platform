@@ -2,7 +2,7 @@ const { body, query } = require('express-validator');
 
 const validarCadastroUsuario = [
     body('nome').trim().notEmpty().withMessage('Nome não pode estar vazio'),
-    body('email').isEmail(), withMessage('Email, inválido'),
+    body('email').isEmail().withMessage('Email, inválido'),
     body('senha').isLength({ min: 6 }).withMessage('Senha deve ter no mínimo 6 caracteres'),
     body('tipoDocumento').isIn([ 'cpf', 'cnpj']).withMessage('Tipo de documento inválido'),
     body('documento').custom((value, { req }) => {
