@@ -3,7 +3,7 @@ const { Op } = require('sequelize');
 
 //Classe usuário
 class UsuarioController{
-    //Assíncrono: Cadastro de Usuário
+    //Assíncrono: Cadastro de usuário
     async cadastrarUsuario(req, res){
         try{
             const{ nome, email, senha, tipoDocumento, documento, dataNascimento, telefone, endereco } = req.body;
@@ -41,6 +41,23 @@ class UsuarioController{
         res.status(201).json(usuarioSemSenha);
         }catch(error){
             res.status(500).json({ mensagem: 'Erro ao cadastrar usuário', erro: error.message});
+        }
+    }
+
+    //Assíncrono: Buscar usuário
+    async buscarUsuario(req, res){
+        try{
+            const usuario = await Usuario.findByPk(req.params.id, {
+                attributes: { exclude: ['senha'] }
+            });
+
+            if(!usuario){
+                return res.json(404).json({ mensagem: 'Usuário não encontrado' });
+            }
+            
+            res.json(usuario);
+        }catch(error){
+            res.status(500).json({ mensagem: 'Erro ao buscar usuário', erro: error.message });
         }
     }
 }
