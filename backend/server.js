@@ -3,6 +3,9 @@ const express = require('express');
 const cors = require('cors');
 const { sequelize } = require('./src/config/database');
 
+//Importação das rotas
+const usuarioRoutes = require('./src/routes/usuario.routes');
+
 
 const app = express();
 
@@ -11,6 +14,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//Rotas
+app.use('/api/usuarios', usuarioRoutes);
 
 
 //Rota de confirmação de teste
