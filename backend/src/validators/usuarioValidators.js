@@ -6,12 +6,16 @@ const validarCadastroUsuario = [
     body('senha').isLength({ min: 6 }).withMessage('Senha deve ter no mínimo 6 caracteres'),
     body('tipoDocumento').isIn([ 'cpf', 'cnpj']).withMessage('Tipo de documento inválido'),
     body('documento').custom((value, { req }) => {
-        if(req.body.tipoDocumento === 'cpf'){
-            if(!/^\d{11}$/.test(value)){
+        if (req.body.tipoDocumento === 'cpf') {
+            // Remoção de caracteres não numéricos
+            const cpfLimpo = value.replace(/\D/g, '');
+            if (!/^\d{11}$/.test(cpfLimpo)) {
                 throw new Error('CPF inválido');
             }
-        }else if(req.body.tipoDocumento === 'cnpj'){
-            if(!/^\d{14}$/.test(value)){
+        } else if (req.body.tipoDocumento === 'cnpj') {
+            // Remoção de caracteres não numéricos
+            const cnpjLimpo = value.replace(/\D/g, '');
+            if (!/^\d{14}$/.test(cnpjLimpo)) {
                 throw new Error('CNPJ inválido');
             }
         }
