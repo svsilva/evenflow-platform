@@ -44,6 +44,40 @@ class UsuarioController{
         }
     }
 
+    //Assíncrono: Atualizar dados do usuário
+    async atualizarUsuario(req, res){
+        try{
+            const usuario = await Usuario.findByPk(req.params.id);
+
+            if(!usuario){
+                return res.status(404).json({ mensagem: 'Usuário não encontrado' });
+            }
+            
+            if(usuario.id != req.usuario.id && req.usuario.nivelAcesso != 'admin'){
+                return res.status(403).json({ mensagem: 'Sem permissão para atualizar este usuário' });
+            }
+
+            const camposPermitidos = ['nome', 'telefone', 'endereco'];
+            const dadosAtualizados = {};
+
+            camposPermitidos.forEach(campo => {
+                if(req.body[campo] != undefined){
+                    dadosAtualizados[campo] = req.body[campo];
+                }
+            });
+
+            await usuario.update(dadosAtualizados);
+
+            const usuarioAtualizado = await Usuario.findByPk(req.params.id, {
+                attributes: { exclude: ['senha'] }
+            });
+
+            res.json(usuarioAtualizado);
+        }catch(error){
+            res.status(500).json({ mensagem: 'Erro ao atualizar usuário', erro: error.message });
+        }
+    }
+
     //Assíncrono: Buscar usuário
     async buscarUsuario(req, res){
         try{
