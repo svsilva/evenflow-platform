@@ -5,7 +5,11 @@ const validarLogin = [
     body('senha').notEmpty().withMessage('Senha é obrigatória')
 ];
 
+const validarRecuperacaoSenha = [
+    body('email').isEmail().withMessage('Email inválido')
+];
 
 module.exports = {
-    validarLogin
+    validarLogin,
+    validarRecuperacaoSenha
 }

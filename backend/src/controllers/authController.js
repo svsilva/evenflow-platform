@@ -70,6 +70,24 @@ class AuthController{
         }
     }
 
+    //Assíncrono: Recuperar senha
+    async recuperarSenha(req, res){
+        try{
+            const { email } = req.body;
+
+            const usuario = await Usuario.findOne({ where: { email } });
+            if(!usuario){
+                return res.status(404).json({ mensagem: 'Email não encontrado' });
+            }
+            
+            //Aqui será implementado o envio de email para recuperação de senha, temporareamente apenas simula uma resposta de sucesso
+
+            return res.json({ mensagem: 'Instruções para recuperação de senaha enviadas para seu email' });
+        }catch(error){
+            return res.status(500).json({ mensagem: 'Erro ao recuperar senha', erro: error.message });
+        }
+    }
+
     
 }
 
