@@ -1,2 +1,77 @@
 const { DataTypes } = require('sequelize');
 const bcrypt = require('bcryptjs');
+const { sequelize } = require('../config/database');
+
+const Usuario = sequelize.define('Usuario', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true
+    },
+    nome:{
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    email:{
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate:{
+            isEmail: true
+        }
+    },
+    senha:{
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    tipoDocumento:{
+        type: DataTypes.ENUM('cpf', 'cnpj'),
+        allowNull: false
+    },
+    documento:{
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    nivelAcesso:{
+        type: DataTypes.ENUM('admin', 'organizador', 'usuario'),
+        defaultValue: 'usuario'
+    },
+    dataNascimento:{
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    telefone:{
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    endereco:{
+        type: DataTypes.JSON,
+        allowNull: true,
+        validate:{
+            enderecoValido(value){
+                if(value){
+                    if(!value.rua || !value.bairro || !value.numero || !value.cidade || !value.estado){
+                        throw new Error('Todos os campos de endereço são obrigatórios, exceto complemento');
+                    }if(value.estado.length != 2){
+                        throw new Error('Estado deve ter 2 caracteres');
+                    }
+                }
+            }
+        }
+    }
+}, {
+    hooks:{
+        beforeSave: async (usuario) => {
+            if(usuario.changed('senha')){
+                usuario.senha = await bcrypt.hash(usuario.senha, 10);
+            }
+        }
+    }
+});
+
+Usuario.prototype.verificarSenha = function(senha){
+    return bcrypt.compare(senha, this.senha);
+}
+
+module.exports = Usuario;
