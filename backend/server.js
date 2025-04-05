@@ -4,6 +4,7 @@ const cors = require('cors');
 const { sequelize } = require('./src/config/database');
 
 //Importação das rotas
+const authRoutes = require('./src/routes/auth.routes');
 const usuarioRoutes = require('./src/routes/usuario.routes');
 
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //Rotas
+app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 
 
