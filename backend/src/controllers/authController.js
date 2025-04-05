@@ -3,11 +3,11 @@ const Usuario = require('../models/Usuario');
 const { validationResult } = require('express-validator');
 
 class AuthController{
-    gerarToken(usuario){
+    static gerarToken(usuario) {
         return jwt.sign(
-          { id: usuario.id, nivelAcesso: usuario.nivelAcesso },
-          process.env.JWT_SECRET,
-          { expiresIn: process.env. JWT_EXPIRES_IN }  
+            { id: usuario.id, nivelAcesso: usuario.nivelAcesso },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRES_IN }
         );
     }
 
@@ -31,7 +31,7 @@ class AuthController{
                 return res.status(401).json({ mensagem: 'Credenciais inválidas' });
             }
 
-            const token = this.gerarToken(usuario);
+            const token = AuthController.gerarToken(usuario);
 
             return res.json({
                 usuario:{
@@ -45,6 +45,8 @@ class AuthController{
             res.status(500).json({ mensagem: 'Erro ao fazer login', erro: error.message });
         }
     }
+
+    
 }
 
 module.exports = new AuthController();

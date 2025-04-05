@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const UsuarioController = require('../controllers/usuarioController');
+const usuarioController = require('../controllers/usuarioController');
+const { autenticar } = require('../middlewares/auth');
 const { validarCadastroUsuario, validarAtualizacaoUsuario, validarConsultaUsuarios } = require('../validators/usuarioValidators');
 
 //Rotas públicas
-router.post('/', validarCadastroUsuario, UsuarioController.cadastrarUsuario);
-router.get('/', validarConsultaUsuarios, UsuarioController.listarUsuario);
-router.get('/:id', UsuarioController.buscarUsuario);
+router.post('/', validarCadastroUsuario, usuarioController.cadastrarUsuario);
+router.get('/', validarConsultaUsuarios, usuarioController.listarUsuario);
+router.get('/:id', usuarioController.buscarUsuario);
 
 //Rotas protegidas
-router.put('/:id', validarAtualizacaoUsuario, UsuarioController.atualizarUsuario);
+router.put('/:id', autenticar, validarAtualizacaoUsuario, usuarioController.atualizarUsuario);
 
 module.exports = router;

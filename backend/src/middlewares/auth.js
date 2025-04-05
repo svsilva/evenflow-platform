@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Usuario = require('../models/Usuario');
 
-exports.atualizar = async(req, res, next) => {
+exports.autenticar = async(req, res, next) => {
     try{
         let token;
 
