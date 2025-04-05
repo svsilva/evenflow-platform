@@ -42,6 +42,17 @@ const validarCadastroUsuario = [
     body('endero.estado').if(body('endereco').exists()).isLength({ min: 2, max: 2 }).withMessage('Estado deve ter 2 caracteres')
 ];
 
+//Validação de consulta
+const validarConsultaUsuarios = [
+    query('pagina').optional().isInt({ min: 1 }).withMessage('Página deve ser um número inteiro positivo'),
+    query('limite').optional().isInt({ min: 1, max: 100 }).withMessage('Limite deve ser um número entre 1 e 100'),
+    query('nome').optional().trim(),
+    query('email').optional().trim(),
+    query('papel').optional().isIn(['admin', 'organizador', 'cliente']).withMessage('Papel inválido')
+];
+
+
 module.exports = {
     validarCadastroUsuario,
+    validarConsultaUsuarios
 }
