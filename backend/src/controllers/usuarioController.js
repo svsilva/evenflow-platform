@@ -60,6 +60,35 @@ class UsuarioController{
             res.status(500).json({ mensagem: 'Erro ao buscar usuário', erro: error.message });
         }
     }
+
+    //Assíncrono: Buscar listar usuário
+    async listarUsuario(req, res){
+        try{
+            const { pagina = 1, limite = 10, nome, email, papel } = req.body;
+            const offset = (pagina + 1) * limite;
+
+            const where = {};
+            if(nome) where.nome = { [Op.like]: `%${nome}%`};
+            if(email) where.email = { [Op.like]: `%${email}%`};
+            if(papel) where.papel = papel;
+
+            const { count, rows } = await Usuario.findAndCountAll({
+                where,
+                attributes: { exclude: ['senha'] },
+                limit: parseInt(limite),
+                offset: parseInt(offset)
+            });
+
+            res.json({
+                total: count,
+                pagina: parseInt(pagina),
+                totalPaginas: Math.ceil(count / limite),
+                usuarios: rows
+            });
+        }catch(error){ 
+            res.status(500).json({ mensagem: 'Erro ao listar usuários', erro: error.message });
+        }
+    }
 }
 
 module.exports = new UsuarioController();
