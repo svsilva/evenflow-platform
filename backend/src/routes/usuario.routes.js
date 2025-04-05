@@ -6,6 +6,9 @@ const usuarioController = require('../controllers/usuarioController');
 
 //Rotas públicas
 router.post('/', validarCadastroUsuario, usuarioController.cadastrarUsuario);
+router.get('/', validarConsultaUsuarios, usuarioController.listarUsuario);
 router.get('/:id', usuarioController.buscarUsuario);
+
+//Rotas protegidas
 
 module.exports = router;
