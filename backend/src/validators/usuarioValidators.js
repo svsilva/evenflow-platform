@@ -1,4 +1,5 @@
 const { body, query } = require('express-validator');
+const moment = require('moment');
 
 const validarCadastroUsuario = [
     body('nome').trim().notEmpty().withMessage('Nome não pode estar vazio'),
@@ -21,7 +22,16 @@ const validarCadastroUsuario = [
         }
         return true;
     }),
-    body('dataNascimento').isDate().withMessage('Data de nascimento inválida'),
+    body('dataNascimento').custom((value) => {
+        if(!/^\d{2}\/\d{2}\/\d{4}$/.test(value)){
+            throw new Error('Data de nascimento deve estar no formato dd/mm/yyyy');
+        }
+        const dataValida = moment(value, 'DD/MM/YYYY', true).isValid();
+        if(!dataValida){
+            throw new Error('Data de nascimento inválida');
+        }
+        return true
+    }),
     body('telefone').optional().isMobilePhone('pt-BR').withMessage('Telefone inválido'),
     body('endereco').optional().isObject().withMessage('Endereço de ser um objeto'),
     body('endereco.rua').if(body('endereco').exists()).trim().notEmpty().withMessage('Rua é obrigatória'),
