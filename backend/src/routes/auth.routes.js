@@ -7,4 +7,7 @@ const { autenticar } = require('../middlewares/auth');
 //Rotas de autenticação
 router.post('/login', validarLogin, authController.login);
 
+//Rotas protegidas
+router.get('/verificar', autenticar, authController.verificarToken);
+
 module.exports = router;

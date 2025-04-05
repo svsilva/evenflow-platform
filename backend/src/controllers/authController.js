@@ -3,6 +3,8 @@ const Usuario = require('../models/Usuario');
 const { validationResult } = require('express-validator');
 
 class AuthController{
+
+    //Gerar token
     static gerarToken(usuario) {
         return jwt.sign(
             { id: usuario.id, nivelAcesso: usuario.nivelAcesso },
@@ -43,6 +45,28 @@ class AuthController{
             });
         }catch(error){
             res.status(500).json({ mensagem: 'Erro ao fazer login', erro: error.message });
+        }
+    }
+
+    //Assíncrono: Verificação de token
+    async verificarToken(req, res){
+        try{
+            const usuario = await Usuario.findByPk(req.usuario.id);
+
+            if(!usuario){
+                return res.status(404).json({ mensagem: 'Usuário não encontrado' });
+            }
+
+            return res.json({
+                usuario: {
+                    id: usuario.id,
+                    nome: usuario.nome,
+                    email: usuario.email,
+                    nivelAcesso: usuario.nivelAcesso
+                }
+            });
+        }catch(error){
+            return res.status(500).json({ mensagem: 'Erro ao verificar token', erro: error.message });
         }
     }
 
