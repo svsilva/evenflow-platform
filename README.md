@@ -16,7 +16,7 @@ Este projeto é construído utilizando as seguintes tecnologias:
 - **Back-end**:
   - Node.js
   - Express.js
-  - MongoDB (ou outra base de dados, dependendo da escolha)
+  - PostgreSQL (ou outra base de dados, dependendo da escolha)
   - JWT (JSON Web Tokens) para autenticação
 
 - **Front-end**:
