@@ -4,7 +4,7 @@ const { Op } = require('sequelize');
 // Classe LocalController
 class LocalController {
     //Assíncrono para cadastro de local
-    async criarLocal(req, res) {
+    async criarLocal(req, res){
         try {
             //Validando se o usuário está autenticado e autorizado
             if (!req.usuario || !['admin', 'organizador'].includes(req.usuario.nivelAcesso)) {
@@ -40,6 +40,36 @@ class LocalController {
             res.status(201).json(novoLocal);
         } catch (error) {
             res.status(500).json({ mensagem: 'Erro ao criar local', erro: error.message });
+        }
+    }
+
+    //Assíncrono para listar local
+    async listarLocais(req, res){
+        try{    
+            const { pagina= 1, limite = 10, nome, email, capacidade } = req.body;
+            const offset = (pagina - 1) * limite;
+
+            const where = {};
+            if(nome) where.nome = { [Op.like]: `%${nome}`};
+            if(email) where.email = { [Op.like]: `%${email}`}
+            if(capacidade) where.capacidade = { [Op.like]: `%${capacidade}`}
+
+            const { count, rows } = await Local.findAndCountAll({
+                where,
+                attributes: { exclude: ['cnpj'] },
+                limit: parseInt(limite),
+                offset: parseInt(offset),
+                order: [['nome', 'ASC']]
+            });
+
+            res.json({
+                total: count,
+                pagina: parseInt(pagina),
+                totalPaginas: Math.ceil(count / limite),
+                locais: rows
+            })
+        }catch(error){
+            res.status(500).json({ mensagem: 'Errp ao listar locais', erro: error.message });
         }
     }
 }
