@@ -11,5 +11,6 @@ router.get('/:id', usuarioController.buscarUsuario);
 
 //Rotas protegidas
 router.put('/:id', autenticar, validarAtualizacaoUsuario, usuarioController.atualizarUsuario);
+router.delete('/:id', autenticar, usuarioController.deletarUsuario);
 
 module.exports = router;
