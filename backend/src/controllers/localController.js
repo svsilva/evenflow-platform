@@ -34,7 +34,7 @@ class LocalController {
                 endereco,
                 capacidade,
                 descricao,
-                criadoPor
+                criadoPor: req.usuario.id
             });
 
             res.status(201).json(novoLocal);
