@@ -88,6 +88,61 @@ class LocalController {
         }
     }
 
+    //Assíncrono para atualizar local [ID]
+    async atualizarLocal(req, res){
+        try{
+            const local = await Local.findByPk(req.params.id);
+
+            if(!local){
+                return res.json(404).json({ mensagem: 'Local não encontrado' });
+            }
+
+            //Validando se o usuário está autenticado e autorizado
+            if (!req.usuario || !['admin', 'organizador'].includes(req.usuario.nivelAcesso)) {
+                return res.status(403).json({ mensagem: 'Você não tem permissão para realizar esta ação' });
+            }
+
+            const camposPermitidos = ['nome', 'email', 'telefone', 'endereco', 'capacidade', 'descricao'];
+            const dadosAtualizados = {};
+
+            camposPermitidos.forEach(campo => {
+                if(req.body[campo] != undefined){
+                    dadosAtualizados[campo] = req.body[campo];
+                }
+            });
+
+            await local.update(dadosAtualizados);
+
+            const localAtualizado = await Local.findByPk(req.params.id, {
+                attributes: { exclude: ['documento'] }
+            });
+
+            res.json(localAtualizado);
+        }catch(error){
+            res.status(500).json({ mensagem: 'Erro ao atualizar local', erro: error.message });
+        }
+    }
+    
+    async deletarLocal(req, res){
+        try{
+            const local = await Local.findByPk(req.params.id);
+
+            if(!local){
+                return res.json(404).json({ mensagem: 'Local não encontrado' });
+            }
+
+            //Validando se o usuário está autenticado e autorizado
+            if (!req.usuario || !['admin', 'organizador'].includes(req.usuario.nivelAcesso)) {
+                return res.status(403).json({ mensagem: 'Você não tem permissão para realizar esta ação' });
+            }
+
+            await local.destroy();
+            res.json({ mensagem: 'Local deletado com sucesso' });
+        }catch(error){
+            res.status(500).json({ mensagem: 'Erro ao deletar local', erro: error.message });
+        }
+    }
+
 }
 
 module.exports = new LocalController();
