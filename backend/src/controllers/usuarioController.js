@@ -78,7 +78,7 @@ class UsuarioController{
         }
     }
 
-    //Assíncrono: Buscar usuário
+    //Assíncrono: Buscar usuário [ID]
     async buscarUsuario(req, res){
         try{
             const usuario = await Usuario.findByPk(req.params.id, {
@@ -121,6 +121,26 @@ class UsuarioController{
             });
         }catch(error){ 
             res.status(500).json({ mensagem: 'Erro ao listar usuários', erro: error.message });
+        }
+    }
+
+    //Assíncrono: Deletar usuário
+    async deletarUsuario(req, res){
+        try{
+            const usuario = await Usuario.findByPk(req.params.id);
+
+            if(!usuario){
+                return res.status(404).json({ mensagem: 'Usuário não encontrado' });
+            }
+
+            if(usuario.id != req.params.id && req.usuario.nivelAcesso != 'admin'){
+                return res.status(403).json({ mensagem: 'Sem permissão para deletar este usuário' });
+            }
+
+            await usuario.destroy();
+            res.json({ mensagem: 'Usuário deletado com sucesso' });
+        }catch(error){  
+            res.status(500).json({ mensagem: 'Erro ao deletar usuário', erro: error.message });
         }
     }
 }
