@@ -39,6 +39,16 @@ const validarLocal = [
     body('status').optional().isIn(['ativo', 'inativo']).withMessage('Status inválido')
 ];
 
+//Validação de listagem
+const validarConsultaLocais = [
+    query('pagina').optional().isInt({ min: 1 }).withMessage('Página deve ser um número inteiro positivo'),
+    query('limite').optional().isInt({ min: 1, max: 10 }).withMessage('Página deve ser um número inteiro positivo'),
+    query('nome').optional().trim(),
+    query('email').optional().trim(),
+    query('capacidade').optional().isInt({ min: 1 }).withMessage('Capacidade deve ser maior que zero')
+];
+
 module.exports = {
-    validarLocal
+    validarLocal,
+    validarConsultaLocais
 };

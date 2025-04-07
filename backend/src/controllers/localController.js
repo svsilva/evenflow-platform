@@ -46,13 +46,13 @@ class LocalController {
     //Assíncrono para listar local
     async listarLocais(req, res){
         try{    
-            const { pagina= 1, limite = 10, nome, email, capacidade } = req.body;
+            const { pagina= 1, limite = 10, nome, email, capacidade } = req.query;
             const offset = (pagina - 1) * limite;
 
             const where = {};
             if(nome) where.nome = { [Op.like]: `%${nome}`};
             if(email) where.email = { [Op.like]: `%${email}`}
-            if(capacidade) where.capacidade = { [Op.like]: `%${capacidade}`}
+            if(capacidade) where.capacidade = capacidade;
 
             const { count, rows } = await Local.findAndCountAll({
                 where,
@@ -69,7 +69,7 @@ class LocalController {
                 locais: rows
             })
         }catch(error){
-            res.status(500).json({ mensagem: 'Errp ao listar locais', erro: error.message });
+            res.status(500).json({ mensagem: 'Erro ao listar locais', erro: error.message });
         }
     }
 }
