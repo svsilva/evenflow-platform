@@ -1,6 +1,4 @@
 const { DataTypes } = require('sequelize');
-const Local = require('./Local');
-const Usuario = require('./Usuario');
 const sequelize = require('sequelize');
 
 const Evento = sequelize.define('Evento', {
@@ -55,18 +53,10 @@ const Evento = sequelize.define('Evento', {
     localId:{
         type: DataTypes.UUID,
         allowNull: true,
-        references:{
-            model: Local,
-            key: 'id'
-        }
     },
     organizadorId:{
         type: DataTypes.UUID,
         allowNull: true,
-        references:{
-            model: Usuario,
-            key: 'id'
-        }
     },
 
 }, {
