@@ -110,7 +110,8 @@ class UsuarioController{
                 where,
                 attributes: { exclude: ['senha'] },
                 limit: parseInt(limite),
-                offset: parseInt(offset)
+                offset: parseInt(offset),
+                order: [['nome', 'ASC']]
             });
 
             res.json({
