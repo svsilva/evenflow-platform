@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const localController = require('../controllers/localController');
 const { validarLocal } = require('../validators/localValidators');
-const autenticar = require('../middlewares/auth');
+const { autenticar } = require('../middlewares/auth');
 
 //Rotas públicas
 

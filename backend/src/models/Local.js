@@ -11,6 +11,28 @@ const Local = sequelize.define('Local', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate: { isEmail: true },
+        set(value) {
+            this.setDataValue('email', value.toLowerCase());
+        }
+    },
+    telefone:{
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    tipoDocumento:{
+        type: DataTypes.ENUM('cpf', 'cnpj'),
+        allowNull: false
+    },
+    documento:{
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
     endereco:{
         type: DataTypes.JSON,
         allowNull: true,
@@ -42,6 +64,10 @@ const Local = sequelize.define('Local', {
         type: DataTypes.ENUM('ativo', 'inativo'),
         allowNull: false,
         defaultValue: 'ativo'
+    },
+    criadoPor: {
+        type: DataTypes.UUID,
+        allowNull: false
     }
 });
 

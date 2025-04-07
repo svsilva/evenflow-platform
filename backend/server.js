@@ -6,6 +6,7 @@ const { sequelize } = require('./src/config/database');
 //Importação das rotas
 const authRoutes = require('./src/routes/auth.routes');
 const usuarioRoutes = require('./src/routes/usuario.routes');
+const localRoutes = require('./src/routes/local.routes');
 
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 //Rotas
 app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/locais', localRoutes);
 
 
 //Rota de confirmação de teste
