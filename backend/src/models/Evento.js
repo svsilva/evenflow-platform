@@ -69,6 +69,16 @@ const Evento = sequelize.define('Evento', {
         }
     },
 
+}, {
+    hooks:{
+        beforeValidate: async(evento) => {
+            //Se o evento for online, não precisa de local
+            if(evento.tipoEvento === 'online'){
+                evento.localId = null;
+            }
+        }
+    }
 });
+
 
 module.exports = Evento;
