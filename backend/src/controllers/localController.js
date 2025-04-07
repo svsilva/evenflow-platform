@@ -1,5 +1,5 @@
 const Local = require('../models/Local');
-const { Op } = require('sequelize');
+const { Op, json } = require('sequelize');
 
 // Classe LocalController
 class LocalController {
@@ -43,7 +43,7 @@ class LocalController {
         }
     }
 
-    //Assíncrono para listar local
+    //Assíncrono para listar locais
     async listarLocais(req, res){
         try{    
             const { pagina= 1, limite = 10, nome, email, capacidade } = req.query;
@@ -72,6 +72,22 @@ class LocalController {
             res.status(500).json({ mensagem: 'Erro ao listar locais', erro: error.message });
         }
     }
+
+    //Assíncrono para buscar local [ID]
+    async buscarLocal(req, res){
+        try{
+            const local = await Local.findByPk(req.params.id);
+
+            if(!local){
+                return res.json(404).json({ mensagem: 'Local não encontrado' });
+            }
+
+            res.json(local);
+        }catch(error){
+            res.status(500).json({ mensagem: 'Erro ao buscar local', erro: error.message });
+        }
+    }
+
 }
 
 module.exports = new LocalController();

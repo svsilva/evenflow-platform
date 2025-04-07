@@ -6,6 +6,7 @@ const { autenticar } = require('../middlewares/auth');
 
 //Rotas públicas
 router.get('/', validarConsultaLocais, localController.listarLocais);
+router.get('/:id', localController.buscarLocal);
 
 //Rotas protegidas
 router.post('/', autenticar, validarLocal, localController.criarLocal);
