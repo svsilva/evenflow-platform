@@ -7,7 +7,7 @@ const { sequelize } = require('./src/config/database');
 const authRoutes = require('./src/routes/auth.routes');
 const usuarioRoutes = require('./src/routes/usuario.routes');
 const localRoutes = require('./src/routes/local.routes');
-
+const eventoRoutes = require('./src/routes/evento.routes');
 
 const app = express();
 
@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/locais', localRoutes);
-
+app.use('/api/eventos', eventoRoutes);
 
 //Rota de confirmação de teste
 app.get('/', (req, res) => {
