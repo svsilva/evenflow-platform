@@ -4,7 +4,7 @@ const Usuario = require('../Usuario');
 
 const setupAssociations = () => {
     //Relacionamento entre Evento e Local
-    Evento.belongs(Local, {
+    Evento.belongsTo(Local, {
         as: 'local',
         foreignKey: 'localId',
         onDelete: 'SET NULL',
@@ -19,7 +19,7 @@ const setupAssociations = () => {
     });
 
     //Relacionamento entre Evento e Usuário
-    Evento.belongs(Local, {
+    Evento.belongsTo(Usuario, {
         as: 'organizador',
         foreignKey: 'organizadorId',
         onDelete: 'SET NULL',
