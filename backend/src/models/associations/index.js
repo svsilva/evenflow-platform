@@ -5,6 +5,7 @@ const setupAssociations = require('./associations');
 const Evento = require('../Evento');
 const Local = require('../Local');
 const Usuario = require('../Usuario');
+const Ingresso = require('../Ingresso');
 
 //Configurar os relacionamentos
 setupAssociations();

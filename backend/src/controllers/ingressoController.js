@@ -1,4 +1,4 @@
-const { Ingresso, Evento, Usuário } = require('../models');
+const { Ingresso, Evento, Usuário } = require('../models/associations/index');
 const { Op } = require('sequelize');
 const { v4: uuidv4 } = require('uuid');
 const { validarIngresso } = require('../validators/ingressoValidators');
