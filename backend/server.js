@@ -8,6 +8,7 @@ const authRoutes = require('./src/routes/auth.routes');
 const usuarioRoutes = require('./src/routes/usuario.routes');
 const localRoutes = require('./src/routes/local.routes');
 const eventoRoutes = require('./src/routes/evento.routes');
+const ingressoRoutes = require('./src/routes/ingresso.routes');
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/locais', localRoutes);
 app.use('/api/eventos', eventoRoutes);
+app.use('/api/ingressos', ingressoRoutes);
 
 //Rota de confirmação de teste
 app.get('/', (req, res) => {
