@@ -12,7 +12,7 @@ module.exports = {
         const extensaoArquivo = file.name.split('.').pop();
         const key = `usuarios/${usuarioId}/avatar.${extensaoArquivo}`;
 
-        return this.uploadToS3(file, key, 'private');
+        return this.uploadToS3(file, key, 'private', usuarioId);
     },
 
     //Upload de imagem para evento
@@ -23,11 +23,11 @@ module.exports = {
             ? `eventos/${eventoId}/galeria/${nomeArquivo}`
             : `eventos/${eventoId}/capa.${extensaoArquivo}`;
 
-            return this,uploadToS3(file, key, 'public-read');
+            return this.uploadToS3(file, key, 'public-read', eventoId);
     },
 
     //Upload de imagem S3
-    uploadToS3: async(file, key, acl) => {
+    uploadToS3: async(file, key, acl, uploadedBy) => {
         const params = {
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: key,
@@ -35,7 +35,7 @@ module.exports = {
             ACL: acl,
             ContentType: file.mimetype,
             Metadata: {
-                uploadedBy: usuarioId
+                uploadedBy: uploadedBy
             }
         };
 
@@ -44,7 +44,7 @@ module.exports = {
 
     //Gera URL assinada para imagens privadas
     getUrlAssinada: async(key) => {
-        return s3.getSignedUrlPromise('getObject', {
+        return s3.getSignedUrl('getObject', {
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: key,
             Expires: 3600 //1 hora de validade
