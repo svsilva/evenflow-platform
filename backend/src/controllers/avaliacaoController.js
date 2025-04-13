@@ -77,6 +77,41 @@ class AvaliacaoController {
         }
     }
 
+    // Listar avaliações de um usuario
+    async listarAvaliacoesPorUsuario(req, res) {
+        try {
+            const { usuarioId } = req.params;
+
+            // Verificar se o usuario existe
+            const usuario = await Usuario.findByPk(usuarioId);
+            if (!usuario) {
+                return res.status(404).json({ mensagem: 'Usuario não encontrado!' });
+            }
+
+            // Buscar avaliações do evento
+            const avaliacoes = await Avaliacao.findAll({
+                where: { usuarioId },
+                include: [
+                    {
+                        model: Usuario,
+                        as: 'usuario',
+                        attributes: ['id', 'nome']
+                    },
+                    {
+                        model: Evento,
+                        as: 'evento',
+                        attributes: ['id', 'nome', 'data', 'tipoEvento', 'categoria']
+                    }
+                ],
+                attributes: { exclude: ['usuarioId', 'eventoId'] },
+            });
+
+            res.json(avaliacoes);
+        } catch (error) {
+            res.status(500).json({ mensagem: 'Erro ao listar avaliações por usuario', erro: error.message });
+        }
+    }
+
     // Atualizar uma avaliação
     async atualizarAvaliacao(req, res) {
         try {

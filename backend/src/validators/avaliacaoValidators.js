@@ -24,23 +24,15 @@ const validarAtualizacaoAvaliacao = [
         .withMessage('O comentário deve ser um texto.')
 ];
 
-// Validação para o ID da avaliação
-const validarIdAvaliacao = [
-    param('id')
+// Função genérica para validar IDs
+const validarId = (paramName) => [
+    param(paramName)
         .isUUID()
-        .withMessage('O ID da avaliação deve ser um UUID válido.')
-];
-
-// Validação para o ID do evento
-const validarIdEvento = [
-    param('eventoId')
-        .isUUID()
-        .withMessage('O ID do evento deve ser um UUID válido.')
+        .withMessage(`O ID '${paramName}' deve ser um UUID válido.`)
 ];
 
 module.exports = {
     validarCriacaoAvaliacao,
     validarAtualizacaoAvaliacao,
-    validarIdAvaliacao,
-    validarIdEvento
+    validarId
 };
