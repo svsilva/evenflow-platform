@@ -6,28 +6,7 @@ const s3 = new AWS.S3({
     region: process.env.AWS_REGION
 });
 //getUrlAssinada
-module.exports = {
-    //Upload de imagem de perfil do usuário
-    uploadAvatarUsuario: async(usuarioId, file) => {
-        const extensaoArquivo = file.name.split('.').pop();
-        const key = `usuarios/${usuarioId}/avatar.${extensaoArquivo}`;
-
-        return this.uploadToS3(file, key, 'private', usuarioId);
-    },
-
-    //Upload de imagem para evento
-    uploadImagemEvento: async(eventoId, file, isGaleria = false) =>{
-        const extensaoArquivo = file.name.split('.').pop();
-        const nomeArquivo = uuidv4() + '.' + extensaoArquivo;
-        const key = isGaleria
-            ? `eventos/${eventoId}/galeria/${nomeArquivo}`
-            : `eventos/${eventoId}/capa.${extensaoArquivo}`;
-
-            return this.uploadToS3(file, key, 'public-read', eventoId);
-    },
-
-    //Upload de imagem S3
-    uploadToS3: async(file, key, acl, uploadedBy) => {
+const uploadToS3 = async(file, key, acl, uploadedBy) => {
         const params = {
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: key,
@@ -40,6 +19,26 @@ module.exports = {
         };
 
         return s3.upload(params).promise();
+    };
+
+module.exports = {
+    //Upload de imagem de perfil do usuário
+    uploadAvatarUsuario: async(usuarioId, file) => {
+        const extensaoArquivo = file.name.split('.').pop();
+        const key = `usuarios/${usuarioId}/avatar.${extensaoArquivo}`;
+
+        return uploadToS3(file, key, 'private', usuarioId);
+    },
+
+    //Upload de imagem para evento
+    uploadImagemEvento: async(eventoId, file, isGaleria = false) =>{
+        const extensaoArquivo = file.name.split('.').pop();
+        const nomeArquivo = uuidv4() + '.' + extensaoArquivo;
+        const key = isGaleria
+            ? `eventos/${eventoId}/galeria/${nomeArquivo}`
+            : `eventos/${eventoId}/capa.${extensaoArquivo}`;
+
+            return uploadToS3(file, key, 'public-read', eventoId);
     },
 
     //Gera URL assinada para imagens privadas
@@ -50,4 +49,5 @@ module.exports = {
             Expires: 3600 //1 hora de validade
         });
     }
-};
+}    
+
