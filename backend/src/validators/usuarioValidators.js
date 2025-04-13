@@ -1,6 +1,30 @@
 const { body, query } = require('express-validator');
 const moment = require('moment');
 
+//Validação de arquivo de imagem
+const validarArquivoImagem = (req, res, next) => {
+    if (!req.file) {
+        return next();
+    }
+
+    const tiposPermitidos = ['image/jpeg', 'image/png', 'image/gif'];
+    const tamanhoMaximo = 5 * 1024 * 1024; // 5MB
+
+    if (!tiposPermitidos.includes(req.file.mimetype)) {
+        return res.status(400).json({ 
+            mensagem: 'Tipo de arquivo não permitido. Apenas imagens JPG, PNG e GIF são aceitas.' 
+        });
+    }
+
+    if (req.file.size > tamanhoMaximo) {
+        return res.status(400).json({ 
+            mensagem: 'Arquivo muito grande. O tamanho máximo permitido é 5MB.' 
+        });
+    }
+
+    next();
+};
+
 const validarCadastroUsuario = [
     body('nome').trim().notEmpty().withMessage('Nome não pode estar vazio'),
     body('email').isEmail().withMessage('Email, inválido'),
@@ -84,5 +108,6 @@ const validarConsultaUsuarios = [
 module.exports = {
     validarCadastroUsuario,
     validarAtualizacaoUsuario,
-    validarConsultaUsuarios
+    validarConsultaUsuarios,
+    validarArquivoImagem
 }
