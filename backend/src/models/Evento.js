@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
+const Local = require('./Local');
 
 const Evento = sequelize.define('Evento', {
     id:{
@@ -31,8 +32,8 @@ const Evento = sequelize.define('Evento', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    tipoEvento:{
-        type: DataTypes.ENUM('presencial, online'),
+    tipoEvento: {
+        type: DataTypes.ENUM('presencial', 'online'), // Corrigido aqui
         allowNull: false,
     },
     categoria:{
@@ -53,6 +54,10 @@ const Evento = sequelize.define('Evento', {
     localId:{
         type: DataTypes.UUID,
         allowNull: true,
+        references:{
+            model: Local,
+            key: 'id'
+        }
     },
     organizadorId:{
         type: DataTypes.UUID,

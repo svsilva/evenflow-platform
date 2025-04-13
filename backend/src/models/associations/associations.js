@@ -2,7 +2,7 @@ const Usuario = require('../Usuario');
 const Evento = require('../Evento');
 const Local = require('../Local');
 const Ingresso = require('../Ingresso');
-
+const Avaliacao = require('../Avaliacao');
 
 const setupAssociations = () => {
     //Relacionamento entre Evento e Local
@@ -20,6 +20,14 @@ const setupAssociations = () => {
     //Relacionamento entre Ingresso e Usuário
     Ingresso.belongsTo(Usuario, { as: 'comprador', foreignKey: 'compradorId', onUpdate: 'SET NULL', onDelete: 'CASCADE' });
     Usuario.hasMany(Ingresso, { as: 'ingressosComprados', foreignKey: 'compradorId', onUpdate: 'SET NULL', onDelete: 'CASCADE' });
+
+    // Relacionamento entre Avaliacao e Usuario
+    Avaliacao.belongsTo(Usuario, { as: 'usuario', foreignKey: 'usuarioId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    Usuario.hasMany(Avaliacao, { as: 'avaliacoes', foreignKey: 'usuarioId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+ 
+    // Relacionamento entre Avaliacao e Evento
+    Avaliacao.belongsTo(Evento, { as: 'evento', foreignKey: 'eventoId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    Evento.hasMany(Avaliacao, { as: 'avaliacoes', foreignKey: 'eventoId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
 };
 
