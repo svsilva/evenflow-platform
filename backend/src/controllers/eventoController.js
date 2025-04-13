@@ -231,7 +231,10 @@ class EventoController {
                 }
             });
 
-            await Evento.update(dadosAtualizados);
+            // Atualizar o evento com a cláusula where
+            await Evento.update(dadosAtualizados, {
+                where: { id: request.params.id }
+            });
 
             const eventoAtualizado = await Evento.findByPk(request.params.id);
 
@@ -247,7 +250,7 @@ class EventoController {
             const evento = await Evento.findByPk(request.params.id);
 
             if(!evento){
-                return response.json(404).send({ mensagem: 'Local não encontrado' });
+                return response.json(404).send({ mensagem: 'Evento não encontrado' });
             }
 
             //Validando se o usuário está autenticado e autorizado
