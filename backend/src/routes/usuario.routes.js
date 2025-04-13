@@ -2,10 +2,11 @@ const express = require('express');
 const router = express.Router();
 const usuarioController = require('../controllers/usuarioController');
 const { autenticar } = require('../middlewares/auth');
-const { validarCadastroUsuario, validarAtualizacaoUsuario, validarConsultaUsuarios } = require('../validators/usuarioValidators');
+const { validarCadastroUsuario, validarAtualizacaoUsuario, validarConsultaUsuarios, validarArquivoImagem } = require('../validators/usuarioValidators');
+const { upload, processarUpload } = require('../middlewares/upload');
 
 //Rotas públicas
-router.post('/', validarCadastroUsuario, usuarioController.cadastrarUsuario);
+router.post('/', validarCadastroUsuario, upload.single('foto'), validarArquivoImagem, processarUpload, usuarioController.cadastrarUsuario);
 router.get('/', validarConsultaUsuarios, usuarioController.listarUsuario);
 router.get('/:id', usuarioController.buscarUsuario);
 
