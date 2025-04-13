@@ -15,12 +15,15 @@ const sequelize = new Sequelize(
             acquire: 30000,
             idle: 10000
         },
-        dialectOptions: {
-            ssl: {
-                require: true,
-                rejectUnauthorized: process.env.NODE_ENV === 'production',
-            }
-        }
+        dialectOptions:
+            process.env.NODE_ENV === 'production'
+                ? {
+                    ssl: {
+                        require: true,
+                        rejectUnauthorized: true
+                    }
+                }
+                : {}
     }
 );
 
@@ -30,7 +33,6 @@ const sequelize = new Sequelize(
         await sequelize.authenticate();
         console.log('Conectado ao banco de dados com sucesso!');
         
-        // Sincroniza os modelos (opcional)
         if (process.env.NODE_ENV === 'development') {
             await sequelize.sync();
             console.log('Modelos sincronizados com sucesso!');
