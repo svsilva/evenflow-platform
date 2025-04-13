@@ -61,8 +61,14 @@ class AvaliacaoController {
                         model: Usuario,
                         as: 'usuario',
                         attributes: ['id', 'nome']
+                    },
+                    {
+                        model: Evento,
+                        as: 'evento',
+                        attributes: ['id', 'nome', 'data', 'tipoEvento', 'categoria']
                     }
-                ]
+                ],
+                attributes: { exclude: ['usuarioId', 'eventoId'] },
             });
 
             res.json(avaliacoes);
