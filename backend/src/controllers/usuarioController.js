@@ -1,6 +1,7 @@
 const Usuario  = require('../models/Usuario');
 const { Op } = require('sequelize');
 const s3Service = require('../services/s3Service');
+const { formatarDocumento, formatarCEP, formatarData } = require('../utils/formatadores');
 
 //Classe usuário
 class UsuarioController{
@@ -25,16 +26,24 @@ class UsuarioController{
             return res.status(400).json({ mensagem: 'Email ou documento já cadastrado'});
         }
 
+        // Formatar dados
+        const documentoFormatado = formatarDocumento(documento, tipoDocumento);
+        const dataNascimentoFormatada = formatarData(dataNascimento);
+        const cepFormatado = endereco?.cep ? formatarCEP(endereco.cep) : null;
+
         //Cadastrar usuário
         const novoUsuario = await Usuario.create({
             nome,
             email,
             senha,
             tipoDocumento,
-            documento,
-            dataNascimento,
+            documento: documentoFormatado,
+            dataNascimento: dataNascimentoFormatada?.iso,
             telefone,
-            endereco,
+            endereco:{
+                ...endereco,
+                cep: cepFormatado
+            },
             foto
         });
 
