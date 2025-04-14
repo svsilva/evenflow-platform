@@ -8,7 +8,7 @@ class UsuarioController{
     //Assíncrono: Cadastro de usuário
     async cadastrarUsuario(req, res){
         try{
-            const{ nome, email, senha, tipoDocumento, documento, dataNascimento, telefone, endereco } = req.body;
+            const{ nome, email, senha, tipoDocumento, documento, dataNascimento, telefone, endereco, nivelAcesso } = req.body;
             let foto = null;
 
 
@@ -40,6 +40,7 @@ class UsuarioController{
             documento: documentoFormatado,
             dataNascimento: dataNascimentoFormatada?.iso,
             telefone,
+            nivelAcesso,
             endereco:{
                 ...endereco,
                 cep: cepFormatado
