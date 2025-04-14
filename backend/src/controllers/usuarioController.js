@@ -7,6 +7,15 @@ class UsuarioController{
     async cadastrarUsuario(req, res){
         try{
             const{ nome, email, senha, tipoDocumento, documento, dataNascimento, telefone, endereco } = req.body;
+            let foto = null;
+
+            //Verificar se há arquivo e se é uma imagem
+            if(req.file){
+                if(!req.file.mimetype.startsWith('image/')){
+                    return res.status(400).json({ mensagem: 'O arquivo enviado não é uma imagem válida' });
+                }
+                foto = req.file.location
+            }
 
         //Verificar existência de usuário cadastrado
         const usuarioExistente = await Usuario.findOne({
@@ -27,6 +36,7 @@ class UsuarioController{
             nome,
             email,
             senha,
+            foto,
             tipoDocumento,
             documento,
             dataNascimento,
@@ -40,6 +50,9 @@ class UsuarioController{
 
         res.status(201).json(usuarioSemSenha);
         }catch(error){
+            if(error.name === 'SequelizeValidationError'){
+                return res.status(400).json({ mensagem: 'Dados inválidos', erros: error.errors.map(e => e.message) });
+            }
             res.status(500).json({ mensagem: 'Erro ao cadastrar usuário', erro: error.message});
         }
     }
@@ -57,7 +70,7 @@ class UsuarioController{
                 return res.status(403).json({ mensagem: 'Sem permissão para atualizar este usuário' });
             }
 
-            const camposPermitidos = ['nome', 'telefone', 'endereco'];
+            const camposPermitidos = ['nome', 'telefone', 'endereco', 'foto'];
             const dadosAtualizados = {};
 
             camposPermitidos.forEach(campo => {
@@ -65,6 +78,14 @@ class UsuarioController{
                     dadosAtualizados[campo] = req.body[campo];
                 }
             });
+
+            //Verificar se há arquivo e se é uma imagem
+            if(req.file){
+                if(!req.file.mimetype.startsWith('image/')){
+                    return res.status(400).json({ mensagem: 'O arquivo enviado não é uma imagem válida' });
+                }
+                dadosAtualizados.foto = req.file.location;
+            }
 
             await usuario.update(dadosAtualizados);
 
@@ -74,6 +95,9 @@ class UsuarioController{
 
             res.json(usuarioAtualizado);
         }catch(error){
+            if(error.name === 'SequelizeValidationError'){
+                return res.status(400).json({ mensagem: 'Dados inválidos', erros: error.errors.map(e => e.message) });
+            }
             res.status(500).json({ mensagem: 'Erro ao atualizar usuário', erro: error.message });
         }
     }
