@@ -39,7 +39,7 @@ const deletarPastaUsuario = async(usuarioId) => {
         const deleteParams = {
             Bucket: process.env.AWS_BUCKET_NAME,
             Delete:{
-                Objects: objects.Contents.map(obj => ({ Key: obj.key }))
+                Objects: objects.Contents.map(obj => ({ Key: obj.Key }))
             }
         };
 

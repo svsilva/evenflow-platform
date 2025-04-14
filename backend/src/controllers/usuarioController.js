@@ -208,6 +208,10 @@ class UsuarioController{
                 return res.status(403).json({ mensagem: 'Sem permissão para deletar este usuário' });
             }
 
+            //Deletar pasta do usuário no S3
+            await s3Service.deletarPastaUsuario(usuario.id);
+
+            //Deletar usuário do banco de dados
             await usuario.destroy();
             res.json({ mensagem: 'Usuário deletado com sucesso' });
         }catch(error){  
