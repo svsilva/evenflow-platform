@@ -27,7 +27,7 @@ const Usuario = sequelize.define('Usuario', {
     },
     foto:{
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     tipoDocumento:{
         type: DataTypes.ENUM('cpf', 'cnpj'),

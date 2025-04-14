@@ -6,16 +6,14 @@ const s3 = new AWS.S3({
     region: process.env.AWS_REGION
 });
 //getUrlAssinada
-const uploadToS3 = async(file, key, acl, uploadedBy) => {
+const uploadToS3 = async(file, key, acl, metadata = {}) => {
         const params = {
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: key,
             Body: file.data,
             ACL: acl,
             ContentType: file.mimetype,
-            Metadata: {
-                uploadedBy: uploadedBy
-            }
+            Metadata: metadata
         };
 
         return s3.upload(params).promise();
@@ -24,10 +22,14 @@ const uploadToS3 = async(file, key, acl, uploadedBy) => {
 module.exports = {
     //Upload de imagem de perfil do usuário
     uploadAvatarUsuario: async(usuarioId, file) => {
-        const extensaoArquivo = file.name.split('.').pop();
-        const key = `usuarios/${usuarioId}/avatar.${extensaoArquivo}`;
+        const extensaoArquivo = file.name.split('.').pop().toLowerCase();
+        const nomeArquivo = `avatar.${extensaoArquivo}`
+        const key = `usuarios/${usuarioId}/${nomeArquivo}`;
 
-        return uploadToS3(file, key, 'private', usuarioId);
+        return uploadToS3(file, key, 'private', {
+            uploadedBy: usuarioId.toString(),
+            originalName: file.name
+        });
     },
 
     //Upload de imagem para evento

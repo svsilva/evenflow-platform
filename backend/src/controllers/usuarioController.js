@@ -1,5 +1,6 @@
 const Usuario  = require('../models/Usuario');
 const { Op } = require('sequelize');
+const s3Service = require('../services/s3Service');
 
 //Classe usuário
 class UsuarioController{
@@ -9,13 +10,6 @@ class UsuarioController{
             const{ nome, email, senha, tipoDocumento, documento, dataNascimento, telefone, endereco } = req.body;
             let foto = null;
 
-            //Verificar se há arquivo e se é uma imagem
-            if(req.file){
-                if(!req.file.mimetype.startsWith('image/')){
-                    return res.status(400).json({ mensagem: 'O arquivo enviado não é uma imagem válida' });
-                }
-                foto = req.file.location
-            }
 
         //Verificar existência de usuário cadastrado
         const usuarioExistente = await Usuario.findOne({
@@ -36,13 +30,32 @@ class UsuarioController{
             nome,
             email,
             senha,
-            foto,
             tipoDocumento,
             documento,
             dataNascimento,
             telefone,
-            endereco
+            endereco,
+            foto
         });
+
+        //Se houver arquivo, fazer upload  para S3
+        if(req.file){
+            if(!req.file.mimetype.startsWith('image/')){
+                return res.status(400).json({ mensagem: 'o arquivo enviado não é uma imagem válida' });
+            }
+
+            const file = {
+                name: req.file.originalname,
+                data: req.file.buffer,
+                mimetype: req.file.mimetype
+            };
+
+            const uploadResult = await s3Service.uploadAvatarUsuario(novoUsuario.id, file);
+            foto = uploadResult.Location;
+
+            //Atualizar usuário com a URL da imagem
+            await novoUsuario.update({ foto });
+        }
 
         const usuarioSemSenha = await Usuario.findByPk(novoUsuario.id, {
             attributes: { exclude: ['senha'] }

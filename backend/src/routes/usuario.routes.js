@@ -3,10 +3,10 @@ const router = express.Router();
 const usuarioController = require('../controllers/usuarioController');
 const { autenticar } = require('../middlewares/auth');
 const { validarCadastroUsuario, validarAtualizacaoUsuario, validarConsultaUsuarios, validarArquivoImagem } = require('../validators/usuarioValidators');
-const { upload, processarUpload } = require('../middlewares/upload');
+const { upload } = require('../middlewares/upload');
 
 //Rotas públicas
-router.post('/', validarCadastroUsuario, upload.single('foto'), validarArquivoImagem, processarUpload, usuarioController.cadastrarUsuario);
+router.post('/', validarCadastroUsuario, upload.single('foto'), validarArquivoImagem, usuarioController.cadastrarUsuario);
 router.get('/', validarConsultaUsuarios, usuarioController.listarUsuario);
 router.get('/:id', usuarioController.buscarUsuario);
 
