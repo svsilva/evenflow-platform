@@ -27,7 +27,7 @@ const Usuario = sequelize.define('Usuario', {
     },
     foto:{
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     tipoDocumento:{
         type: DataTypes.ENUM('cpf', 'cnpj'),
@@ -56,7 +56,7 @@ const Usuario = sequelize.define('Usuario', {
         validate: {
             enderecoValido(value) {
                 if (value && typeof value === 'object') {
-                    const camposObrigatorios = ['rua', 'bairro', 'numero', 'cidade', 'estado'];
+                    const camposObrigatorios = ['cep', 'rua', 'bairro', 'numero', 'cidade', 'estado'];
                     for (const campo of camposObrigatorios) {
                         if (!value[campo]) {
                             throw new Error(`O campo ${campo} é obrigatório.`);

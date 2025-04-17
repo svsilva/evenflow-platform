@@ -1,21 +1,16 @@
 const Usuario  = require('../models/Usuario');
 const { Op } = require('sequelize');
+const s3Service = require('../services/s3Service');
+const { formatarDocumento, formatarCEP, formatarData } = require('../utils/formatadores');
 
 //Classe usuário
 class UsuarioController{
     //Assíncrono: Cadastro de usuário
     async cadastrarUsuario(req, res){
         try{
-            const{ nome, email, senha, tipoDocumento, documento, dataNascimento, telefone, endereco } = req.body;
+            const{ nome, email, senha, tipoDocumento, documento, dataNascimento, telefone, endereco, nivelAcesso } = req.body;
             let foto = null;
 
-            //Verificar se há arquivo e se é uma imagem
-            if(req.file){
-                if(!req.file.mimetype.startsWith('image/')){
-                    return res.status(400).json({ mensagem: 'O arquivo enviado não é uma imagem válida' });
-                }
-                foto = req.file.location
-            }
 
         //Verificar existência de usuário cadastrado
         const usuarioExistente = await Usuario.findOne({
@@ -31,18 +26,46 @@ class UsuarioController{
             return res.status(400).json({ mensagem: 'Email ou documento já cadastrado'});
         }
 
+        // Formatar dados
+        const documentoFormatado = formatarDocumento(documento, tipoDocumento);
+        const dataNascimentoFormatada = formatarData(dataNascimento);
+        const cepFormatado = endereco?.cep ? formatarCEP(endereco.cep) : null;
+
         //Cadastrar usuário
         const novoUsuario = await Usuario.create({
             nome,
             email,
             senha,
-            foto,
             tipoDocumento,
-            documento,
-            dataNascimento,
+            documento: documentoFormatado,
+            dataNascimento: dataNascimentoFormatada?.iso,
             telefone,
-            endereco
+            nivelAcesso,
+            endereco:{
+                ...endereco,
+                cep: cepFormatado
+            },
+            foto
         });
+
+        //Se houver arquivo, fazer upload  para S3
+        if(req.file){
+            if(!req.file.mimetype.startsWith('image/')){
+                return res.status(400).json({ mensagem: 'o arquivo enviado não é uma imagem válida' });
+            }
+
+            const file = {
+                name: req.file.originalname,
+                data: req.file.buffer,
+                mimetype: req.file.mimetype
+            };
+
+            const uploadResult = await s3Service.uploadAvatarUsuario(novoUsuario.id, file);
+            foto = uploadResult.Location;
+
+            //Atualizar usuário com a URL da imagem
+            await novoUsuario.update({ foto });
+        }
 
         const usuarioSemSenha = await Usuario.findByPk(novoUsuario.id, {
             attributes: { exclude: ['senha'] }
@@ -60,8 +83,11 @@ class UsuarioController{
     //Assíncrono: Atualizar dados do usuário
     async atualizarUsuario(req, res){
         try{
-            const usuario = await Usuario.findByPk(req.params.id);
+            const { id } = req.params;
+            const { nome, email, senha, tipoDocumento, documento, dataNascimento, telefone, endereco } = req.body;
+            let foto = null;
 
+            const usuario = await Usuario.findByPk(id);
             if(!usuario){
                 return res.status(404).json({ mensagem: 'Usuário não encontrado' });
             }
@@ -70,26 +96,46 @@ class UsuarioController{
                 return res.status(403).json({ mensagem: 'Sem permissão para atualizar este usuário' });
             }
 
-            const camposPermitidos = ['nome', 'telefone', 'endereco', 'foto'];
-            const dadosAtualizados = {};
+            const documentoFormatado = documento ? formatarDocumento(documento, tipoDocumento) : usuario.documento;
+            const dataNascimentoFormatada = dataNascimento ? formatarData(dataNascimento) : null;
+            const cepFormatado = endereco?.cep ? formatarCEP(endereco.cep) : usuario.endereco?.cep;
 
-            camposPermitidos.forEach(campo => {
-                if(req.body[campo] != undefined){
-                    dadosAtualizados[campo] = req.body[campo];
-                }
+            await usuario.update({
+                nome: nome || usuario.nome,
+                email: email || usuario.email,
+                senha: senha || usuario.senha,
+                tipoDocumento: tipoDocumento || usuario.tipoDocumento,
+                documento: documentoFormatado,
+                dataNascimento: dataNascimentoFormatada?.iso || usuario.dataNascimento,
+                telefone: telefone || usuario.telefone,
+                endereco:{
+                    ...usuario.endereco,
+                    ...endereco,
+                    cep: cepFormatado
+                },
+                foto: foto || usuario.foto
             });
 
-            //Verificar se há arquivo e se é uma imagem
+            //Se houver arquivo, fazer upload  para S3
             if(req.file){
                 if(!req.file.mimetype.startsWith('image/')){
-                    return res.status(400).json({ mensagem: 'O arquivo enviado não é uma imagem válida' });
+                    return res.status(400).json({ mensagem: 'o arquivo enviado não é uma imagem válida' });
                 }
-                dadosAtualizados.foto = req.file.location;
+
+                const file = {
+                    name: req.file.originalname,
+                    data: req.file.buffer,
+                    mimetype: req.file.mimetype
+                };
+
+                const uploadResult = await s3Service.uploadAvatarUsuario(usuario.id, file);
+                foto = uploadResult.Location;
+
+                //Atualizar usuário com a URL da imagem
+                await usuario.update({ foto });
             }
 
-            await usuario.update(dadosAtualizados);
-
-            const usuarioAtualizado = await Usuario.findByPk(req.params.id, {
+            const usuarioAtualizado = await Usuario.findByPk(id, {
                 attributes: { exclude: ['senha'] }
             });
 
@@ -162,6 +208,10 @@ class UsuarioController{
                 return res.status(403).json({ mensagem: 'Sem permissão para deletar este usuário' });
             }
 
+            //Deletar pasta do usuário no S3
+            await s3Service.deletarPastaUsuario(usuario.id);
+
+            //Deletar usuário do banco de dados
             await usuario.destroy();
             res.json({ mensagem: 'Usuário deletado com sucesso' });
         }catch(error){  
