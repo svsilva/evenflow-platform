@@ -7,6 +7,7 @@ const Local = require('../Local');
 const Usuario = require('../Usuario');
 const Ingresso = require('../Ingresso');
 const Avaliacao = require('../Avaliacao');
+const Notificacao = require('../Notificacao');
 
 //Configurar os relacionamentos
 setupAssociations();
@@ -17,5 +18,6 @@ module.exports = {
     Local,
     Usuario,
     Ingresso,
-    Avaliacao
+    Avaliacao,
+    Notificacao
 }
