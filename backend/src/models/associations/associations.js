@@ -3,6 +3,7 @@ const Evento = require('../Evento');
 const Local = require('../Local');
 const Ingresso = require('../Ingresso');
 const Avaliacao = require('../Avaliacao');
+const Notificacao = require('../Notificacao'); 
 
 const setupAssociations = () => {
     //Relacionamento entre Evento e Local
@@ -29,6 +30,9 @@ const setupAssociations = () => {
     Avaliacao.belongsTo(Evento, { as: 'evento', foreignKey: 'eventoId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     Evento.hasMany(Avaliacao, { as: 'avaliacoes', foreignKey: 'eventoId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
+    // Relacionamento entre Notificacao e Usuario
+    Notificacao.belongsTo(Usuario, { as: 'usuario', foreignKey: 'usuarioId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    Usuario.hasMany(Notificacao, { as: 'notificacoes', foreignKey: 'usuarioId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 };
 
 module.exports = setupAssociations;
