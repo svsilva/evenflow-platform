@@ -25,6 +25,10 @@ const Notificacao = sequelize.define('Notificacao', {
         defaultValue: false,
         allowNull: false
     },
+    dataCriacao: {
+        type: DataTypes.DATE,
+        allowNull : false
+    },
     usuarioId: {
         type: DataTypes.UUIDV4,
         allowNull: false,
