@@ -10,6 +10,7 @@ const localRoutes = require('./src/routes/local.routes');
 const eventoRoutes = require('./src/routes/evento.routes');
 const ingressoRoutes = require('./src/routes/ingresso.routes');
 const avaliacaoRoutes = require('./src/routes/avaliacao.routes');
+const notificacoesRoutes = require('./src/routes/notificacao.routes');
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use('/api/locais', localRoutes);
 app.use('/api/eventos', eventoRoutes);
 app.use('/api/ingressos', ingressoRoutes);
 app.use('/api/avaliacoes', avaliacaoRoutes);
+app.use('/api/notificacoes', notificacoesRoutes);
 
 //Rota de confirmação de teste
 app.get('/', (req, res) => {
