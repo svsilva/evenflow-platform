@@ -30,7 +30,7 @@ const Notificacao = sequelize.define('Notificacao', {
         allowNull : false
     },
     usuarioId: {
-        type: DataTypes.UUIDV4,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: Usuario,
