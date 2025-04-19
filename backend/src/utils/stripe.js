@@ -25,10 +25,9 @@ export const createStripeCustomer = async({
     });
 };
 
-// Cria produto não recorrente
+// Cria produto (No nosso caso seria o evento)
 export const createStripeProduct = async({name, description, price}) =>{
-
-    return stripe.products.create({
+    let product = stripe.products.create({
         name: name,
         description: description,
         active: true,
@@ -37,4 +36,36 @@ export const createStripeProduct = async({name, description, price}) =>{
             unit_amount_decimal: price
         }
     })
+    return product;
 }
+
+// Cria a sessão de pagamento pdo ingresso do usuario.
+export const createStripeCheckout = async({email, usuarioId, priceId, quantity}) =>{
+    try {
+        // retorna o cliente na stripe, se não existir cria um
+        const customer = createStripeCustomer({
+            email
+        });
+
+        const thisSession  = await stripe.checkout.sessions.create({
+            success_url: process.env.STRIPE_SUCCESS_URL,
+            cancel_url: process.env.STRIPE_ERROR_URL,
+            mode: 'payment',
+            customer: customer.id,
+            client_reference_id: usuarioId,
+            line_items : [
+                {
+                    price: priceId,
+                    quantity: quantity
+                }
+            ],
+            payment_method_types : ['card', 'boleto'],
+
+        })
+        return thisSession;
+
+    } catch (error) {
+        console.log('checkout Error: ', error);
+    }
+}
+
