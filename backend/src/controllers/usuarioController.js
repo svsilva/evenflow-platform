@@ -37,6 +37,7 @@ class UsuarioController{
         const stripeCustomer = await createStripeCustomer({ 
             email: email, 
             name: nome });
+        console.log(stripeCustomer);
 
         //Cadastrar usuário
         const novoUsuario = await Usuario.create({
@@ -53,7 +54,7 @@ class UsuarioController{
                 cep: cepFormatado
             },
             foto,
-            stripeCustomerId: stripeCustomer.id // Salva o ID do cliente da Stripe
+            stripeCustomerId: stripeCustomer?.id // Salva o ID do cliente da Stripe
         });
 
         //Se houver arquivo, fazer upload  para S3
