@@ -1,5 +1,6 @@
 const { stripe } = require('../services/stripeService'); 
 const { CheckoutSession } = require('../models/associations/index');
+const ingressoController = require('../controllers/ingressoController');
 
 class WebhookController {
     async handleStripeWebhook(req, res) {
@@ -26,16 +27,25 @@ class WebhookController {
                     
                     if(!checkoutSession){
                         console.warn(`CheckoutSession ${session.id} não encontrada no banco de dados.`);
-                        return res.status(404).json({mensagem: `CheckoutSession ${session.id} não encontrada no banco de dados.`, success: false})
+                        return res.status(404).json({mensagem: `Webhook recebido, mas a CheckoutSession ${session.id} não foi encontrada no banco de dados.`, success: false})
                     }
-
-                    checkoutSession.status = event.type === 'checkout.session.completed'
-                        ? 'pago'
-                        : event.type === 'checkout.session.expired'
-                        ? 'expirado'
-                        : 'cancelado';
+                    const status = event.type === 'checkout.session.completed'
+                    ? 'pago'
+                    : event.type === 'checkout.session.expired'
+                    ? 'expirado'
+                    : 'cancelado';
+                    checkoutSession.status = status;
+                    // atualiza o status do checkout no banco
                     await checkoutSession.save();
-                    console.log(`CheckoutSession ${session.id} atualizado para ${checkoutSession.status}`);
+
+                    const statusIngresso = event.type === 'checkout.session.expired' || event.type === 'checkout.session.canceled'
+                    ? 'cancelado' : 'reservado';
+
+                    // atualiza o status do ingresso.
+                    await ingressoController.atualizarStatusIngresso(checkoutSession.ingressoId, statusIngresso);
+
+                    console.log(`CheckoutSession ${checkoutSession.idCheckout} atualizado para ${checkoutSession.status}`);
+                    console.log(`Ingresso ${checkoutSession.ingressoId} atualizado para ${statusIngresso}`);
     
                     break;
                 }
