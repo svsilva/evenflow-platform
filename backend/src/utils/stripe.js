@@ -1,18 +1,18 @@
-import Stripe from 'stripe';
+const Stripe = require('stripe');
 
 // inicia conexão com a  stripe
-export const stripe = new Stripe(process.env.STRIPE_SECRET, {
+const stripe = new Stripe(process.env.STRIPE_SECRET, {
     httpClient: Stripe.createFetchHttpClient(),
 });
 
 // verifica se já existe um cliente com o mesmo email na base da stripe
-export const getStripeCustomerByEmail = async (email) =>{
+const getStripeCustomerByEmail = async (email) =>{
     const customers = await stripe.customers.list({email});
     return customers?.data[0];
 };
 
 // cria cliente
-export const createStripeCustomer = async({ email, name }) => {
+const createStripeCustomer = async({ email, name }) => {
     try{
         const customer = await getStripeCustomerByEmail(email);
         if(customer) return customer;
@@ -23,7 +23,7 @@ export const createStripeCustomer = async({ email, name }) => {
         });
         return newCustomer
     }
-    catch(Error){
+    catch(error){
         console.log('createStripeCustomer Error: ', error);
         throw error; 
     }
@@ -31,7 +31,7 @@ export const createStripeCustomer = async({ email, name }) => {
 };
 
 // Cria produto (No nosso caso seria o evento)
-export const createStripeProduct = async({name, description, price}) =>{
+const createStripeProduct = async({name, description, price}) =>{
     try{
         let product = await stripe.products.create({
             name: name,
@@ -46,13 +46,13 @@ export const createStripeProduct = async({name, description, price}) =>{
     }
     catch(Error){
         console.log('createStripeProduct Error: ', error);
-        throw error; 
+        throw Error; 
     }
    
 }
 
 // Cria a sessão de pagamento pdo ingresso do usuario.
-export const createStripeCheckout = async({email, usuarioId, priceId, quantity}) =>{
+const createStripeCheckout = async({email, usuarioId, priceId, quantity}) =>{
     try {
         // retorna o cliente na stripe, se não existir cria um
         const customer = await createStripeCustomer({ email });
@@ -79,4 +79,34 @@ export const createStripeCheckout = async({email, usuarioId, priceId, quantity})
         throw error; 
     }
 }
+
+// const handleCheckoutCompleted = async(event) =>{
+//     const checkoutId = event.data.object.id; 
+//     //const idUsuario = event.data.object.client_reference_id;
+//     //const stripeCustomerId = event.data.object.customer;
+//     const checkoutStatus = event.data.object.status;
+    
+    
+//     try {
+//         // Chama a controller para atualizar o status do checkout
+//         await atualizarStatusCheckout({
+//             params: { id: checkoutId },
+//             body: { status: checkoutStatus },
+//         });
+
+//         console.log(`Checkout ${checkoutId} atualizado com sucesso.`);
+//     } catch (error) {
+//         console.error(`Erro ao atualizar o checkout ${checkoutId}:`, error);
+//         throw error;
+//     }
+
+// }
+
+module.exports = {
+    stripe,
+    getStripeCustomerByEmail,
+    createStripeCustomer,
+    createStripeProduct,
+    createStripeCheckout,
+};
 
