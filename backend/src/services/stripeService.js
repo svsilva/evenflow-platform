@@ -33,13 +33,16 @@ const createStripeCustomer = async({ email, name }) => {
 // Cria produto (No nosso caso seria o evento)
 const createStripeProduct = async({name, description, price}) =>{
     try{
+        // Converte o preço corretamente o preço
+        const priceInCents = Math.round(price * 100);
+
         let product = await stripe.products.create({
             name: name,
             description: description,
             active: true,
             default_price_data: {
                 currency: 'brl',
-                unit_amount_decimal: price
+                unit_amount_decimal: priceInCents
             }
         });
         return product;
