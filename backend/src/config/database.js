@@ -15,12 +15,12 @@ const sequelize = new Sequelize(
             acquire: 30000,
             idle: 10000
         },
-        dialectOptions: {
+        dialectOptions: process.env.NODE_ENV === 'production' ? {
             ssl: {
                 require: true,
-                rejectUnauthorized: process.env.NODE_ENV === 'production',
+                rejectUnauthorized: false
             }
-        }
+        } : {}, // Desativa SSL para dev
     }
 );
 
