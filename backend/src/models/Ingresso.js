@@ -22,7 +22,7 @@ const Ingresso = sequelize.define('Ingresso', {
         allowNull: false
     },
     status:{
-        type: DataTypes.ENUM('pendente','disponivel', 'reservado', 'vendido', 'utilizado', 'cancelado'),
+        type: DataTypes.ENUM('pendente','disponivel', 'reservado', 'vendido', 'utilizado', 'cancelado', 'expirado'),
         defaultValue: 'disponivel',
         allowNull: false
     },
