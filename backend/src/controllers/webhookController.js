@@ -1,4 +1,4 @@
-const { stripe } = require('../utils/stripe'); 
+const { stripe } = require('../services/stripeService'); 
 const { CheckoutSession } = require('../models/associations/index');
 
 class WebhookController {
@@ -20,14 +20,13 @@ class WebhookController {
                 case 'checkout.session.canceled': {
                     const session = event.data.object;
 
-                    // Atualiza o status da sessão no banco de dados
                     const checkoutSession = await CheckoutSession.findOne({
                         where: { idCheckout: session.id },
                     });
                     
                     if(!checkoutSession){
                         console.warn(`CheckoutSession ${session.id} não encontrada no banco de dados.`);
-                        return res.status(404).json({mensagem: `CheckoutSession ${session.id} não encontrada no banco de dados.`})
+                        return res.status(404).json({mensagem: `CheckoutSession ${session.id} não encontrada no banco de dados.`, success: false})
                     }
 
                     checkoutSession.status = event.type === 'checkout.session.completed'

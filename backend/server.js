@@ -21,7 +21,7 @@ const app = express();
 app.use(cors());
 app.use(
     '/api/webhook',
-    express.raw({ type: 'application/json' }), // Middleware exclusivo para o webhook
+    express.raw({ type: 'application/json' }), // Middleware exclusivo para o webhook da stripe (Precisa ficar antes do express.json)
     webhookRoutes
 );
 

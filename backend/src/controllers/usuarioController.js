@@ -2,7 +2,7 @@ const Usuario  = require('../models/Usuario');
 const { Op } = require('sequelize');
 const s3Service = require('../services/s3Service');
 const { formatarDocumento, formatarCEP, formatarData } = require('../utils/formatadores');
-const { createStripeCustomer } = require('../utils/stripe'); 
+const { createStripeCustomer } = require('../services/stripeService'); 
 
 
 //Classe usuário

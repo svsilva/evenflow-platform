@@ -1,5 +1,5 @@
 const { CheckoutSession, Evento, Usuario, Ingresso } = require('../models/associations/index');
-const { createStripeCheckout } = require('../utils/stripe');
+const { createStripeCheckout } = require('../services/stripeService');
 const { validationResult } = require('express-validator');
 
 class CheckoutSessionController {
