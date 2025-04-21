@@ -1,4 +1,5 @@
 const Stripe = require('stripe');
+//import Stripe from 'stripe';
 
 // inicia conexão com a  stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET, {
@@ -12,14 +13,24 @@ const getStripeCustomerByEmail = async (email) =>{
 };
 
 // cria cliente
-const createStripeCustomer = async({ email, name }) => {
+const createStripeCustomer = async({ email, name, address, phone }) => {
     try{
         const customer = await getStripeCustomerByEmail(email);
         if(customer) return customer;
     
         const newCustomer = await stripe.customers.create({
             email: email,
-            name: name
+            name: name,
+            phone: phone,
+            address: {
+                city: address?.cidade,
+                state: address?.estado,
+                postal_code: address?.cep,
+                // Rua + Bairro + Numero
+                line1: address?.formattedEndereco,
+                country: 'BR',
+            },
+            
         });
         return newCustomer
     }
@@ -66,6 +77,7 @@ const createStripeCheckout = async({email, usuarioId, priceId, quantity}) =>{
             mode: 'payment',
             customer: customer.id,
             client_reference_id: usuarioId,
+            billing_address_collection: 'required',
             line_items : [
                 {
                     price: priceId,

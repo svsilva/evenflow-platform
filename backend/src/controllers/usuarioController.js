@@ -36,7 +36,15 @@ class UsuarioController{
         // Cria cliente na Stripe
         const stripeCustomer = await createStripeCustomer({ 
             email: email, 
-            name: nome });
+            name: nome, 
+            phone: telefone,
+            address: {
+                cidade: endereco?.cidade,
+                estado: endereco?.estado,
+                cep: cepFormatado,
+                formattedEndereco: `${endereco?.rua}, Número ${endereco?.numero} - Bairro ${endereco?.bairro}`
+            }
+        });
         console.log(stripeCustomer);
 
         //Cadastrar usuário
