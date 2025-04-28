@@ -1,5 +1,29 @@
 const { body, query } = require('express-validator');
-const moment = require('moment');
+const { formatarDocumento, formatarCEP, formatarData } = require('../utils/formatadores');
+
+//Validação de arquivo de imagem
+const validarArquivoImagem = (req, res, next) => {
+    if (!req.file) {
+        return next();
+    }
+
+    const tiposPermitidos = ['image/jpeg', 'image/png', 'image/gif'];
+    const tamanhoMaximo = 5 * 1024 * 1024; // 5MB
+
+    if (!tiposPermitidos.includes(req.file.mimetype)) {
+        return res.status(400).json({ 
+            mensagem: 'Tipo de arquivo não permitido. Apenas imagens JPG, PNG e GIF são aceitas.' 
+        });
+    }
+
+    if (req.file.size > tamanhoMaximo) {
+        return res.status(400).json({ 
+            mensagem: 'Arquivo muito grande. O tamanho máximo permitido é 5MB.' 
+        });
+    }
+
+    next();
+};
 
 const validarCadastroUsuario = [
     body('nome').trim().notEmpty().withMessage('Nome não pode estar vazio'),
@@ -7,39 +31,38 @@ const validarCadastroUsuario = [
     body('senha').isLength({ min: 6 }).withMessage('Senha deve ter no mínimo 6 caracteres'),
     body('tipoDocumento').isIn([ 'cpf', 'cnpj']).withMessage('Tipo de documento inválido'),
     body('documento').custom((value, { req }) => {
-        if (req.body.tipoDocumento === 'cpf') {
-            // Remoção de caracteres não numéricos
-            const cpfLimpo = value.replace(/\D/g, '');
-            if (!/^\d{11}$/.test(cpfLimpo)) {
-                throw new Error('CPF inválido');
-            }
-        } else if (req.body.tipoDocumento === 'cnpj') {
-            // Remoção de caracteres não numéricos
-            const cnpjLimpo = value.replace(/\D/g, '');
-            if (!/^\d{14}$/.test(cnpjLimpo)) {
-                throw new Error('CNPJ inválido');
-            }
+        try{
+            req.body.documentoFormatado = formatarDocumento(value, req.body.tipoDocumento);
+            return true;
+        }catch(error){
+            throw new Error(error.message)
         }
-        return true;
     }),
     body('dataNascimento').custom((value) => {
-        if(!/^\d{2}\/\d{2}\/\d{4}$/.test(value)){
-            throw new Error('Data de nascimento deve estar no formato dd/mm/yyyy');
+        try{
+            const data = formatarData(value)
+            req.body.dataNascimentoISO = data.iso;
+            return true;
+        }catch(error){
+            throw new Error(error.message);
         }
-        const dataValida = moment(value, 'DD/MM/YYYY', true).isValid();
-        if(!dataValida){
-            throw new Error('Data de nascimento inválida');
-        }
-        return true
     }),
     body('telefone').optional().isMobilePhone('pt-BR').withMessage('Telefone inválido'),
     body('endereco').optional().isObject().withMessage('Endereço de ser um objeto'),
+    body('endereco.cep').custom((value) => {
+        try{
+            req.body.endereco.cepFormatado = formatarCEP(value);
+            return true;
+        }catch(error){
+            throw new Error(error.message);
+        }
+    }),
     body('endereco.rua').if(body('endereco').exists()).trim().notEmpty().withMessage('Rua é obrigatória'),
     body('endereco.bairro').if(body('endereco').exists()).trim().notEmpty().withMessage('Bairro é obrigatório'),
     body('endereco.numero').if(body('endereco').exists()).trim().notEmpty().withMessage('Número é obrigatório'),
     body('endereco.complemento').optional().trim(),
     body('endereco.cidade').if(body('endereco').exists()).trim().notEmpty().withMessage('Cidade é obrigatória'),
-    body('endero.estado').if(body('endereco').exists()).isLength({ min: 2, max: 2 }).withMessage('Estado deve ter 2 caracteres')
+    body('endereco.estado').if(body('endereco').exists()).isLength({ min: 2, max: 2 }).withMessage('Estado deve ter 2 caracteres')
 ];
 
 //Validação de atualização
@@ -49,20 +72,31 @@ const validarAtualizacaoUsuario = [
     body('senha').isLength({ min: 6 }).withMessage('Senha deve ter no mínimo 6 caracteres'),
     body('tipoDocumento').isIn(['cpf', 'cnpj']).withMessage('Tipo de documento inválido'),
     body('documento').custom((value, { req }) => {
-        if (req.body.tipoDocumento === 'cpf') {
-        if (!/^\d{11}$/.test(value)) {
-            throw new Error('CPF inválido');
+        try{
+            req.body.documentoFormatado = formatarDocumento(value, req.body.tipoDocumento)
+        }catch(error){
+            throw new Error(error.message)
         }
-        } else if (req.body.tipoDocumento === 'cnpj') {
-        if (!/^\d{14}$/.test(value)) {
-            throw new Error('CNPJ inválido');
-        }
-        }
-        return true;
     }),
-    body('dataNascimento').isDate().withMessage('Data de nascimento inválida'),
+    body('dataNascimento').custom((value) => {
+        try{
+            const data = formatarData(value)
+            req.body.dataNascimentoISO = data.iso;
+            return true;
+        }catch(error){
+            throw new Error(error.message);
+        }
+    }),
     body('telefone').optional().isMobilePhone('pt-BR').withMessage('Telefone inválido'),
     body('endereco').optional().isObject().withMessage('Endereço deve ser um objeto'),
+    body('endereco.cep').custom((value) => {
+        try{
+            req.body.endereco.cepFormatado = formatarCEP(value);
+            return true;
+        }catch(error){
+            throw new Error(error.message);
+        }
+    }),
     body('endereco.rua').if(body('endereco').exists()).trim().notEmpty().withMessage('Rua é obrigatória'),
     body('endereco.bairro').if(body('endereco').exists()).trim().notEmpty().withMessage('Bairro é obrigatório'),
     body('endereco.numero').if(body('endereco').exists()).trim().notEmpty().withMessage('Número é obrigatório'),
@@ -84,5 +118,6 @@ const validarConsultaUsuarios = [
 module.exports = {
     validarCadastroUsuario,
     validarAtualizacaoUsuario,
-    validarConsultaUsuarios
+    validarConsultaUsuarios,
+    validarArquivoImagem
 }
