@@ -12,11 +12,19 @@ const ingressoRoutes = require('./src/routes/ingresso.routes');
 const avaliacaoRoutes = require('./src/routes/avaliacao.routes');
 const notificacoesRoutes = require('./src/routes/notificacao.routes');
 const checkoutSessionRoutes = require('./src/routes/checkoutSession.routes');
+const webhookRoutes = require('./src/routes/webhook.routes'); // Nova rota do webhook
+
 
 const app = express();
 
 //Middlewares
 app.use(cors());
+app.use(
+    '/api/webhook',
+    express.raw({ type: 'application/json' }), // Middleware exclusivo para o webhook da stripe (Precisa ficar antes do express.json)
+    webhookRoutes
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -29,6 +37,8 @@ app.use('/api/ingressos', ingressoRoutes);
 app.use('/api/avaliacoes', avaliacaoRoutes);
 app.use('/api/notificacoes', notificacoesRoutes);
 app.use('/api/checkout-sessions', checkoutSessionRoutes);
+
+
 
 //Rota de confirmação de teste
 app.get('/', (req, res) => {

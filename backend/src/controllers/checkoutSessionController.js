@@ -1,5 +1,5 @@
 const { CheckoutSession, Evento, Usuario, Ingresso } = require('../models/associations/index');
-const { createStripeCheckout } = require('../utils/stripe');
+const { createStripeCheckout } = require('../services/stripeService');
 const { validationResult } = require('express-validator');
 
 class CheckoutSessionController {
@@ -46,16 +46,13 @@ class CheckoutSessionController {
                 ingressoId
             });
 
-            res.status(201).json({
-                mensagem: 'Sessão de checkout criada com sucesso!',
-                checkoutSession: novaCheckoutSession
-            });
+            res.status(201).json(novaCheckoutSession );
         } catch (error) {
             res.status(500).json({ mensagem: 'Erro ao criar sessão de checkout', erro: error.message });
         }
     }
 
-    // Atualizar o status da sessão de checkout
+    // rota para atualizar o status da sessão de checkout apenas no banco de dados (Não esta em uso por enquanto)
     async atualizarStatusCheckout(req, res) {
         try {
             const { id } = req.params;

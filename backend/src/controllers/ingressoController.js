@@ -50,6 +50,24 @@ class IngressoController{
             res.status(500).json({ mensagem: 'Erro ao criar ingresso', erro: error.message });
         }
     }
+
+    async atualizarStatusIngresso(ingressoId, novoStatus) {
+        try {
+            const ingresso = await Ingresso.findByPk(ingressoId);
+
+            if (!ingresso) {
+                throw new Error(`Ingresso com ID ${ingressoId} não encontrado.`);
+            }
+
+            ingresso.status = novoStatus;
+            await ingresso.save();
+
+            return ingresso;
+        } catch (error) {
+            console.error(`Erro ao atualizar status do ingresso: ${error.message}`);
+            throw error;
+        }
+    }
 }
 
 module.exports = new IngressoController();

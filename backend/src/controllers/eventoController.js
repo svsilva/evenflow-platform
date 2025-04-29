@@ -1,7 +1,7 @@
 const { Evento, Local } = require('../models/associations/index');
 const { Op } = require('sequelize');
 const { validationResult } = require('express-validator');
-const { createStripeProduct } = require('../utils/stripe');
+const { createStripeProduct } = require('..//services/stripeService');
 
 class EventoController {
 
