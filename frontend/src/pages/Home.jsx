@@ -1,61 +1,11 @@
 import React from 'react';
-import { Typography, Card, CardContent, CardMedia, Button, Box } from '@mui/material';
-import Slider from 'react-slick';
-import styled from 'styled-components';
+import { Typography, Box } from '@mui/material';
 import { motion } from 'framer-motion';
-
-const HeroSection = styled.section`
-  margin-bottom: 4rem;
-`;
-
-const EventCard = styled(Card)`
-  margin: 1rem;
-  background-color: ${({ theme }) => theme.palette.background.paper};
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-  }
-`;
-
-const StyledSlider = styled(Slider)`
-  .slick-dots {
-    bottom: -40px;
-  }
-
-  .slick-dots li button:before {
-    color: ${({ theme }) => theme.palette.primary.main};
-  }
-
-  .slick-dots li.slick-active button:before {
-    color: ${({ theme }) => theme.palette.primary.main};
-  }
-`;
+import { HeroSection } from '../styles/components/home/home';
+import EventSlider from '../components/home/EventSlider';
+import BenefitsSection from '../components/home/BenefitsSection';
 
 const Home = () => {
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 5000,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 2,
-        }
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 1,
-        }
-      }
-    ]
-  };
 
   // Dados mockados para exemplo
   const eventos = [
@@ -112,70 +62,10 @@ const Home = () => {
         <Typography variant="h2" component="h2" gutterBottom>
           Eventos em Destaque
         </Typography>
-        
-        <StyledSlider {...settings}>
-          {eventos.map((evento) => (
-            <EventCard key={evento.id}>
-              <CardMedia
-                component="img"
-                height="200"
-                image={evento.imagem}
-                alt={evento.titulo}
-              />
-              <CardContent>
-                <Typography variant="h6" component="h3" gutterBottom>
-                  {evento.titulo}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" paragraph>
-                  {evento.data} • {evento.local}
-                </Typography>
-                <Typography variant="h6" color="primary" gutterBottom>
-                  {evento.preco}
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                >
-                  Comprar Ingresso
-                </Button>
-              </CardContent>
-            </EventCard>
-          ))}
-        </StyledSlider>
+        <EventSlider eventos={eventos} />
       </section>
 
-      <Box sx={{ mt: 6, textAlign: 'center' }}>
-        <Typography variant="h2" component="h2" gutterBottom>
-          Por que escolher o EvenFlow?
-        </Typography>
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 4, mt: 4 }}>
-          <Box>
-            <Typography variant="h5" gutterBottom>
-              Eventos Exclusivos
-            </Typography>
-            <Typography variant="body1" color="textSecondary">
-              Acesso aos melhores eventos culturais e artísticos
-            </Typography>
-          </Box>
-          <Box>
-            <Typography variant="h5" gutterBottom>
-              Ingressos Garantidos
-            </Typography>
-            <Typography variant="body1" color="textSecondary">
-              Sistema seguro de compra e entrega de ingressos
-            </Typography>
-          </Box>
-          <Box>
-            <Typography variant="h5" gutterBottom>
-              Experiência Premium
-            </Typography>
-            <Typography variant="body1" color="textSecondary">
-              Atendimento personalizado e suporte 24/7
-            </Typography>
-          </Box>
-        </Box>
-      </Box>
+      <BenefitsSection />
     </motion.div>
   );
 };

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import CssBaseline from '@mui/material/CssBaseline';
-import { darkTheme } from './styles/themes/darktTheme';
+import { darkTheme } from './styles/themes/darkTheme';
 import { GlobalStyles } from './styles/global/GlobalStyles';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
