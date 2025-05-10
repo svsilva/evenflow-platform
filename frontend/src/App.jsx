@@ -23,11 +23,11 @@ function App() {
           <Layout>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/eventos" element={<Eventos />} />
+              {/*<Route path="/eventos" element={<Eventos />} />
               <Route path="/evento/:id" element={<EventoDetalhes />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/sobre" element={<Sobre />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />*/}
             </Routes>
           </Layout>
         </Router>
