@@ -1,5 +1,5 @@
 // Dados mockados para exemplo
-export  const eventos = [
+export const eventos = [
     {
       id: 1,
       titulo: 'Festival de Música',
@@ -33,3 +33,8 @@ export  const eventos = [
       preco: 'R$ 120,00'
     }
   ];
+
+export const categorias = ['Música', 'Arte', 'Teatro', 'Gastronomia', 'Dança', 'Cinema'];
+
+export const cidades = ['São Paulo', 'Rio de Janeiro', 'Belo Horizonte', 'Salvador', 'Recife'];
+
