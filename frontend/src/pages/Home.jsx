@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Box } from '@mui/material';
 import { motion } from 'framer-motion';
-import { HeroSection } from '../styles/components/home/home';
+import { HeroSection } from '../styles/components/homeStyleComponents';
 import EventSlider from '../components/home/EventSlider';
 import BenefitsSection from '../components/home/BenefitsSection';
 

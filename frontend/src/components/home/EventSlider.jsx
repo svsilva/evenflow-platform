@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, CardContent, CardMedia, Button } from '@mui/material';
-import { StyledSlider, EventCard } from '../../styles/components/home/home';
+import { StyledSlider, EventCard } from '../../styles/components/homeStyleComponents';
 
 const EventSlider = ({ eventos }) => {
   const settings = {
