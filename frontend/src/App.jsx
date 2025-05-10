@@ -27,10 +27,7 @@ function App() {
               <Route path="/evento/:id" element={<EventoDetalhes />} />
               <Route path="/sobre" element={<Sobre />} />
               <Route path="/auth" element={<Auth />} />
-              {/*
-              
-              
-              <Route path="/dashboard" element={<Dashboard />} />*/}
+              <Route path="/dashboard" element={<Dashboard />} />
             </Routes>
           </Layout>
         </Router>
