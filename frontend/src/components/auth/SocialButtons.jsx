@@ -1,6 +1,6 @@
 import React from 'react';
 import { Google, Facebook } from '@mui/icons-material';
-import { SocialButton } from '../../styles/components/authStyleComponents';
+import { SocialButton } from '../../styles/components/authStyle';
 
 const SocialAuthButtons = ({ onSocialLogin }) => {
   return (

@@ -1,8 +1,9 @@
 import React from 'react';
 import { Typography, CardContent, CardMedia, Button } from '@mui/material';
-import { StyledSlider, EventCard } from '../../styles/components/homeStyleComponents';
+import { StyledSlider, EventCard } from '../../styles/components/homeStyle';
+import  { eventos } from '../../data/eventos';
 
-const EventSlider = ({ eventos }) => {
+const EventSlider = () => {
   const settings = {
     dots: true,
     infinite: true,

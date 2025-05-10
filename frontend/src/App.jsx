@@ -9,7 +9,7 @@ import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 //import EventoDetalhes from './pages/EventoDetalhes';
 //import Eventos from './pages/Eventos';
-//import Auth from './pages/Auth';
+import Auth from './pages/Auth';
 //import Sobre from './pages/Sobre';
 //import Dashboard from './pages/Dashboard';
 
@@ -23,9 +23,9 @@ function App() {
           <Layout>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/auth" element={<Auth />} />
               {/*<Route path="/eventos" element={<Eventos />} />
               <Route path="/evento/:id" element={<EventoDetalhes />} />
-              <Route path="/auth" element={<Auth />} />
               <Route path="/sobre" element={<Sobre />} />
               <Route path="/dashboard" element={<Dashboard />} />*/}
             </Routes>
