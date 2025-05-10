@@ -8,7 +8,7 @@ import { GlobalStyles } from './styles/global/GlobalStyles';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import Eventos from './pages/Eventos';
-//import EventoDetalhes from './pages/EventoDetalhes';
+import EventoDetalhes from './pages/content/EventoDetalhes';
 import Auth from './pages/Auth';
 import Sobre from './pages/Sobre';
 //import Dashboard from './pages/Dashboard';
@@ -24,10 +24,11 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/eventos" element={<Eventos />} />
+              <Route path="/evento/:id" element={<EventoDetalhes />} />
               <Route path="/sobre" element={<Sobre />} />
               <Route path="/auth" element={<Auth />} />
               {/*
-              <Route path="/evento/:id" element={<EventoDetalhes />} />
+              
               
               <Route path="/dashboard" element={<Dashboard />} />*/}
             </Routes>
