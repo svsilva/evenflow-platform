@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, CardContent, CardMedia, Button } from '@mui/material';
 import { StyledSlider, EventCard } from '../../styles/components/homeStyle';
-import  { eventos } from '../../data/eventos';
+import  { eventos } from '../../data/dadosMockados';
 
 const EventSlider = () => {
   const settings = {
