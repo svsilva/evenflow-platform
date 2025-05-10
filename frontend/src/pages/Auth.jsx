@@ -29,9 +29,12 @@ const AuthContainer = styled(Paper)`
 
 const SocialButton = styled(Button)`
   width: 100%;
-  margin-bottom: 1rem;
   text-transform: none;
   font-size: 1rem;
+
+  &:not(:last-child) {
+    margin-bottom: 1rem;
+  }
 `;
 
 const Auth = () => {

@@ -7,7 +7,7 @@ export const HeroSection = styled.section`
 `;
 
 export const EventCard = styled(Card)`
-  margin: 1rem;
+  margin-inline: 0.5rem;
   background-color: ${({ theme }) => theme.palette.background.paper};
   transition: transform 0.3s ease;
 
@@ -27,5 +27,13 @@ export const StyledSlider = styled(Slider)`
 
   .slick-dots li.slick-active button:before {
     color: ${({ theme }) => theme.palette.primary.main};
+  }
+
+  .slick-slide{
+    padding: 0 1rem;
+  }
+
+  .slick-list{
+    margin: 0 -1rem;
   }
 `;

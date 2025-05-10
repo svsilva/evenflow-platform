@@ -10,7 +10,7 @@ export const AuthContainer = styled(Paper)`
 
 export const SocialButton = styled(Button)`
   width: 100%;
-  margin-bottom: 1rem;
   text-transform: none;
   font-size: 1rem;
+  
 `;
