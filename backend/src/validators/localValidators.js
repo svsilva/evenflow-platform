@@ -23,7 +23,7 @@ const validarLocal = [
     }),
     body('endereco').optional().isObject().withMessage('Endereço de ser um objeto'),
     body('endereco.cep').custom((value) => {
-        const cepRegex = /^\d{2}\.?\{3}-?\d{3}$/;
+        const cepRegex = /^\d{2}\.?\d{3}-?\d{3}$/;
         if(!cepRegex.test(value)){
             throw new Error('O CEP deve estar no formato XXXXX-XXX, XXXXXXXX ou XX.XXX-XXX');
         }

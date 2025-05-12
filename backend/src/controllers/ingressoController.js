@@ -16,7 +16,7 @@ class IngressoController{
                 return res.status(400).json({ errors: errors.array() });
             }
 
-            const { eventoId, quantidade, metodoPagamento } = req.body;
+            const { eventoId, quantidade, metodoPagamento, tipo, preco } = req.body;
             const usuarioId = req.usuario.id;
 
             //Verificação de existência de evento e se está ativo
@@ -25,14 +25,16 @@ class IngressoController{
                 return res.status(404).json({ mensagem: 'Evento não encontrado' });
             }
 
-            if(evento.status != 'ativo'){
-                return res.status(400).json({ mensagem: 'Evento não está disponível para venda de ingressos' });
-            }
+            // if(evento.status != 'ativo'){
+            //     return res.status(400).json({ mensagem: 'Evento não está disponível para venda de ingressos' });
+            // }
             
             //Criar o ingresso
             const ingresso = await Ingresso.create({
+                preco,
+                tipo,
                 eventoId,
-                usuarioId,
+                compradorId: usuarioId,
                 quantidade,
                 metodoPagamento,
                 status: 'pendente'
@@ -46,6 +48,24 @@ class IngressoController{
             res.status(201).json(ingresso);
         }catch(error){  
             res.status(500).json({ mensagem: 'Erro ao criar ingresso', erro: error.message });
+        }
+    }
+
+    async atualizarStatusIngresso(ingressoId, novoStatus) {
+        try {
+            const ingresso = await Ingresso.findByPk(ingressoId);
+
+            if (!ingresso) {
+                throw new Error(`Ingresso com ID ${ingressoId} não encontrado.`);
+            }
+
+            ingresso.status = novoStatus;
+            await ingresso.save();
+
+            return ingresso;
+        } catch (error) {
+            console.error(`Erro ao atualizar status do ingresso: ${error.message}`);
+            throw error;
         }
     }
 }
